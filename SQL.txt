@@ -1,0 +1,486 @@
+SQL is a language that is used to interact with RDBMS.SQL used to define tables and structures.RDMS is a software application which we can use to create and manage our databases.
+
+Database: any collection of related information
+
+DBMS: Database management system - a special software program that help users create and maintain a database
+
+	makes it easy to manage large amounts of information
+	handles security
+	backups
+	importing/exporting data
+
+CRUD are 4 main operations that dbms perform on database.
+
+Two types of databases:
+
+	Relational Data
+bases(SQL) - organize data into one or more tables
+		a unique key identifies each row
+
+	Non-relational(not just SQL) - organize data is anything but a traditional table (anything that is not relational database)
+		
+		key-value stores
+		documents(json,xml)
+		graph
+
+Database Queries
+
+	Queries are requests made to the database management system for specific information.
+	A google search is a query.
+
+ 
+Table and Keys:
+
+	Primary key: An attribute which uniquely defines (identifies specific row) the row in the database.
+
+	surrogate key: a key that has no mapping to anything 	in the real world.
+
+	natural key: a key that has a mapping or has a purpose 	in the real world,not just in the database.
+
+	Foreign key: an attribute that we can store on a database table that will link us to another database table. foreign key is primary key of another table.
+	A foreign key allows us to link up or define relationships between tables.
+
+	composite key: a key that needs two attributes.
+
+
+You can get use SQL to get the RDBMS to do things for you
+	
+	CRUD data
+	perform administration tasks(security,user management,import/export)
+
+SQL implementations vary between systems.The concepts are the same but the implementation may vary
+
+SQL is a hybrid language
+
+	Data Query Language is used to get data that's already 	stored in the database.
+
+	Data Definition Language(DDL) is used to define database schemas. schema is overall layout of the database.
+
+	Data Control Language is used for controlling access to the data in the database.
+
+	Data Manipulation Language used for inserting,updating 	and deleting data from the database.
+
+
+common datatypes in SQL:
+
+	INT
+	DECIMAL(M,N) - M:number of digits in the number
+		       N: number of digits after the decimal
+
+	VARCHAR(1) - string of text of length 1
+	BLOB - binary large object,stores large data
+	DATE - 'yyyy-mm-dd'
+	TIMESTAMP - 'yyyy-mm-dd hh:mm:ss' - used for recoding the time
+
+
+
+
+SQL commands in MySQL:
+
+	create database - create database name;
+
+	creating table - CREATE TABLE table_name (
+		
+		student_id INT PRIMARY KEY,
+		name VARCHAR(20),
+		major VARCHAR(20)
+		);
+
+	describe table - DESCRIBE table_name;
+
+	delete table - DROP TABLE table_name;
+
+	modify table - ALTER TABLE table_name ADD new_col_name datatype;
+
+	drop specific column - ALTER TABLE table_name DROP COLUMN col_name;
+
+	insert into table - INSESRT INTO table_name VALUES(1,'Jack','Biology');
+
+	get all information from table - SELECT * FROM table_name;
+
+	constraints - CREATE TABLE table_name(student_id INT,name VARCHAR(20) NOT NULL,major VARCHAR(20) UNIQUE,PRIMARY KEY(student_id));
+		      CREATE TABLE table_name(student_id INT,name VARCHAR(20) NOT NULL,major VARCHAR(20) DEFAULT 'undecided',PRIMARY KEY(student_id));
+		      CREATE TABLE table_name(student_id INT AUTO_INCREMENT,name VARCHAR(20) NOT NULL,major VARCHAR(20) UNIQUE,PRIMARY KEY(student_id));
+
+	update and delete rows - UPDATE table_name SET major = 'Bio' WHERE major = 'Biology'; // change major Biology to Bio
+				 UPDATE table_name SET major = 'Biochemistry' WHERE major = 'Bio' OR major = 'Chemistry';
+				 
+				 DELETE FROM table_name WHERE name='Tom' AND major = 'undecided';
+
+
+	Basic Queries - SELECT student.name, student.major FROM student ORDER BY name;  // lexicographical order according to name
+			SELECT student.name, student.major FROM student ORDER BY name DESC;
+			SELECT * FROM table_name ORDER BY major,student_id DESC;
+
+			// limit the results
+
+			SELECT * FROM table_name ORDER BY student_id DESC LIMIT 2;
+			
+			if we get -- infront of a sql command it is comment
+			operators used with WHERE in sql are <,>,<=,>=,<>(not equal),AND,OR
+
+			SELECT * FROM student WHERE name IN ('Claire','Kate','Mike');
+
+	// Adding references via foreign key ---- we can't just define foreign key the other table has to exist
+
+
+	// first create employee table
+
+	// then creating branch table
+
+	CREATE TABLE branch(
+
+		branch_id INT PRIMARY KEY,
+		branch_name VARCHAR(40),
+		mgr_id INT,
+		mgr_start_date DATE,
+		FOREIGN KEY(mgr_id) REFERENCES employee(emp_id) ON DELETE SET NULL
+	);
+
+
+	// now add the foreign keys of the employee table
+
+	ALTER TABLE employee ADD FOREIGN KEY(branch_id) REFERENCES branch(branch_id) ON DELETE SET NULL;
+
+
+	// how to create a composite key with two primary keys
+
+	PRIMARY KEY(emp_id,client_id);
+
+	
+	-- Find all employees
+
+	SELECT * FROM employee;
+
+	-- Find all employees ordered by salary
+
+	SELECT * FROM employee ORDERED BY salary;
+
+	-- Find all employees ordered by sex and then name
+
+	SELECT * FROM employee ORDERED BY sex,first_name,last_name;
+
+	-- Find first 5 employees in the table
+
+	SELECT * FROM employee LIMIT 5;
+
+	-- Find the first and last names of all employees
+
+	SELECT first_name,last_name FROM employee;
+
+	-- Find the forename and surnames of all employees
+	
+	SELECT first_name AS forename, last_name AS surname FROM employee;
+
+	-- Find out all the different genders
+
+	SELECT DISTINCT sex FROM employee;
+	
+	
+	-- SQL functions
+
+	-- Find the number of employees
+
+	SELECT COUNT(emp_id) FROM employee;
+
+	-- Find the number of female employees born after 1970
+
+	SELECT COUNT(emp_id) FROM employee WHERE sex='F' AND birth_date > '1971-01-01';
+
+	-- Find the average of all employee's salary
+
+	SELECT AVG(salary) FROM employee;
+
+	-- Find the sum of all employee's salary
+	
+	SELECT SUM(salary) FROM employee;
+
+	-- Find out how many males and females there are
+
+	SELECT COUNT(sex),sex FROM employee GROUP BY sex; //to aggregate
+
+	-- find the total sales of each salesman
+
+	SELECT SUM(total_sales),emp_id FROM works_with GROUP BY emp_id;
+
+
+SQL Wildcards:
+	Wildcards are basically a way of defining different patterns that we want to match specific pieces of data to.
+
+	-- % = any number of characters, _ = one character
+
+	-- Find any client's who are an LLC
+
+	SELECT * FROM client WHERE client_name LIKE '%LLC'
+
+	-- LIKE is a special keyword we basically use with wildcards.
+
+	-- Find any branch suppliers who are in the label business
+
+	SELECT * FROM branch_supplier WHERE supplier_name LIKE '% Label%'
+
+	-- Find any employee born in October
+
+	SELECT * FROM employee WHERE birth_date LIKE '____-10%';
+
+	-- Find any clients who are schools
+
+	SELECT * FROM client WHERE client_name LIKE '%school%'
+
+
+
+
+
+Union:
+
+	Union is a special sql operator which we can use to combine to results of multiple select statements into one.
+
+	-- Find a list of employee and branch names
+
+	SELECT first_name AS Company_Names FROM employee
+	UNION
+	SELECT branch_name FROM branch;
+
+	-- Find a list of all clients & branch suppliers names
+
+	SELECT client_name, branch_id FROM client UNION SELECT supplier_name, branch_id FROM branch_supplier;
+
+	-- Find a list of all money spent or earned by the company
+
+	SELECT salary FROM employee UNION SELECT total_sales FROM works_with;
+
+Joins:
+
+	Joins are basically used to combine rows from two or more tables based on related column between them.
+
+
+	There are 4 types of joins:
+
+	1. JOIN(basically called as INNER JOIN)
+
+
+	-- Find all branches and the names of their managers
+	SELECT employee.emp_id, employee.first_name, branch.branch_name FROM employee JOIN branch ON employee.emp_id = branch.mgr_id;
+
+
+	2. LEFT JOIN
+
+	left join includes all rows from the left table in this case the employee table
+
+	3.RIGHT JOIN
+
+	right join includes all rows from the right table in this case the branch table
+
+	4.FULL OUTER JOIN(we can't use this in MySQL) 
+	
+	combination of left join and right join
+
+Nested Queries:
+
+	A nested query is basically a query where we're going to be using multiple select statements in order to get a specific piece of information
+
+	-- Find names of all employees who have sold over 30,000 to a single client
+
+	SELECT employee.first_name, employee.last_name FROM employee WHERE employee.emp_id IN (
+SELECT works_with.emp_id FROM works_with WHERE works_with.total_sales > 30000
+);
+
+	-- Find all clients who are handled by the branch that Michael Scott manages.Assume you know Michael's ID
+
+
+	SELECT client.client_name FROM client WHERE client.branch_id = (SELECT branch.branch_id FROM branch WHERE branch.mgr_id = 102 LIMIT 1);
+
+
+On Delete:
+
+	Deleting entry in the database when they have foreign keys associated to them.
+
+	ON DELETE SET NULL -- if the foreign key is not primary key then we can delete it wihtout hesitation
+	ON DELETE CASCADE -- but if the foregin key itself is the part of the primary key then we have to delete the rows corresponding to the deleted value.
+
+
+Triggers:
+	A trigger is basically a block of SQL code which we can write which will define a certain action that should happen when a certain operation gets performed on the database.
+
+
+	DELIMITER $$
+	CREATE
+		TRIGGER name_of_tiger BEFORE INSERT
+		ON employee
+		FOR EACH ROW BEGIN
+			INSERT INTO trigger_test VALUES('added new employee');
+
+		END$$
+	DELIMITER ;
+
+	------------------------------------------
+	DELIMITER $$
+	CREATE
+		TRIGGER name_of_tiger BEFORE INSERT
+		ON employee
+		FOR EACH ROW BEGIN
+			INSERT INTO trigger_test VALUES(NEW.first_name);
+
+		END$$
+	DELIMITER ;
+
+
+	-- here NEW refers to the row that is being inserted, so we can access the first_name of the row of the employee table.
+
+	-------------------------------------------
+	DELIMITER $$
+	CREATE
+		TRIGGER name_of_tiger BEFORE INSERT
+		ON employee
+		FOR EACH ROW BEGIN
+			IF NEW.sex = 'M' THEN
+				INSERT INTO trigger_test VALUES('added male employee');
+
+			ELSEIF NEW.sex = 'F' THEN
+				INSERT INTO trigger_test VALUES('added female employee');
+
+			ELSE
+				INSERT INTO trigger_test VALUES('added other employee');
+
+			END IF;
+
+		END$$
+	DELIMITER ;
+
+
+	-- Dropping a trigger
+
+	DROP TRIGGER name_of_trigger;
+
+
+ER Diagrams:
+
+	When we're designing a database, one of the most important thing is designing a database schema. A database schema is basically just all the different tables and the different attributes that are going to be on those tables.
+
+	ER diagram is a great way to take data storage requirements and sort of convert them into actual database schema.
+
+	Entity - An object we want to model & store information about.(square or rectanlge)
+
+	Attributes - Specific pieces of information about an entity(oval)
+	
+	Primary key - underline the oval attribute
+
+	multi-valued attribute - attribute with extra circle
+
+	derived attributes - dotted oval attribute
+
+	Relationship - denoted by diamond symbol
+
+	
+
+	 
+
+	
+
+	
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+
+
+	
+
+
+
+	
+
+	
+
+	
+
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+		
+
+	 
+
+	
+	
+
+	
+
+	
+				 
+				 
+
+
+
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+
+
+
+
+
+
+
+
